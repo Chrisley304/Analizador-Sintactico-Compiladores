@@ -17,6 +17,965 @@
 #define LONGITUD_MAXIMA_CADENAS 20
 FILE *archSal; // Archivo de salida
 
+// Variables analizador sintáctico
+char cadena[4000];
+int atomo = 0;
+int errores = 0;
+
+// Firma de funciones de analizador sintáctico
+void getchar();
+void error(char*)
+void program();
+void veredicto();
+void rechaza();
+void otraFunc();
+void func();
+void param();
+void otroParam();
+void cuerpo();
+void decl();
+void d();
+void tipo();
+void k();
+void q();
+void n();
+void c();
+void a();
+void aPrima();
+void e();
+void ePrima();
+void t();
+void tPrima();
+void f();
+void r();
+void rPrima();
+void v();
+void vPrima();
+void vBiPrima();
+void vTriPrima();
+void p();
+void listaP();
+void w();
+void i();
+void iPrima();
+void j();
+void y();
+void x();
+void z();
+void h();
+void cPrima();
+void oPrima();
+void u();
+void devuelve();
+void valor();
+void llama();
+void arg();
+void otroArg();
+
+// Definción de funciones auxiliares de analizador sintáctico
+void error(char * error){
+    printf("Error al analizar atomo %d: %c, se esperaba %s \n",atomo, cadena[atomo], error);
+    errores ++;
+}
+
+void getchar(){
+    return cadena[atomo++];
+}
+
+void veredicto(){
+    if (errores = 0){
+        printf("No hay errores en el analisis sintactico\n");
+    }else{
+        printf("En el analisis sintactico hubo %d errores \n", errores);
+    }
+}
+
+void iniciaCadena(){
+    int i = 0;
+    for(i = 0; i < 4000; i ++){
+        cadena[i] = '_';
+    }
+}
+
+// Definición de funciones de analizador sintáctico
+void program(){ // 1
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        func();
+        otrafunc();
+        return;
+    }else{
+        error("bg#yx");
+    }
+    rechaza();
+}
+
+void otraFunc(){ // 2
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        func();
+        otrafunc();
+        return;
+    }else if(c == '_'){
+        return;
+    }else{
+        error("bg#yx_");
+    }
+    rechaza();
+}
+
+void func(){ // 3
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        tipo();
+        if(c == 'i'){
+            c = getchar();
+            if(c == '('){
+                c = getchar();
+                param();
+                if(c == ')'){
+                    c = getchar();
+                    if(c == '{'){
+                        c = getchar();
+                        cuerpo();
+                        if(c == '}'){
+                            c = getchar();
+                            return;
+                        }else{
+                            error("}");
+                        }
+                    }else{
+                        error("{");
+                    }
+                }else{
+                    error(")");
+                }
+            }else{
+                error("(");
+            }
+        }else{
+            error("i");
+        }
+    }else{
+        error("bg#yx");
+    }
+    rechaza();
+}
+
+void param(){ // 4
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        tipo();
+        if(c == 'i'){
+            c = getchar();
+            otroparam();
+            return;
+        }else{
+            error("i");
+        }
+    }else if(c == ')'){
+        return;
+    }else{
+        error("bg#yx)");
+    }
+    rechaza();
+}
+
+void otroParam(){ // 5
+    if(c == ','){
+        c = getchar();
+        tipo();
+        if(c == 'i'){
+            c = getchar();
+            otroparam();
+            return;
+        }else{
+            error("i");
+        }
+    }else if(c == ')'){
+        return;
+    }else{
+        error(",)");
+    }
+    rechaza();
+}
+
+void cuerpo(){ // 6
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'||
+        c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
+        c == '}'|| c == '['|| c == 'z'|| c == 'c'){
+        decl();
+        listaP();
+        return;
+    }else{
+        error("bg#yxifhwj}[zc");
+    }
+    rechaza();
+}
+
+void decl(){ // 7
+    if(c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
+        c == '}'|| c == '['|| c == 'z'|| c == 'c'){
+        return;
+    }else if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        d();
+        decl();
+        return;
+    }else{
+        error("bg#yxifhwj}[zc");
+    }
+    rechaza();
+}
+
+void d(){ // 8
+    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+        tipo();
+        k();
+        if(c == ';'){
+            c = getchar();
+            return;
+        }else{
+            error(";");
+        }
+    }else{
+        error("bg#yx");
+    }
+    rechaza();
+}
+
+void tipo(){ // 9
+    if(c == 'b'){
+        c = getchar();
+        return;
+    }else if( c == 'g'){
+        c = getchar();
+        return;
+    }else if( c == '#'){
+        c = getchar();
+        return;
+    }else if( c == 'y'){
+        c = getchar();
+        return;
+    }else if( c == 'x'){
+        c = getchar();
+        return;
+    }else{
+        error("bg#yx");
+    }
+    rechaza();
+}
+
+
+void k(){ // 10
+    if(c == 'i'){
+        c = getchar();
+        q();
+        return;
+    }else{
+        error("i");
+    }
+    rechaza();
+}
+
+void q(){ // 11
+    if(c == ';'){
+        return;
+    }else if(c == '='){
+        c = getchar();
+        n();
+        c();
+        return;
+    }else if(c == ','){
+        c = getchar();
+        k();
+        return;
+    }else{
+        error(";=,");
+    }
+    rechaza();
+}
+
+void n(){ // 12
+    if(c == 'n'){
+        c = getchar();
+        return;
+    }else if(c == 'r'){
+        c = getchar();
+        return;
+    }else if(c == 's'){
+        c = getchar();
+        return;
+    }else{
+        error("nrs");
+    }
+    rechaza();
+}
+
+void d(){ // 13
+    if(c == ';'){
+        return;
+    }else if(c == ','){
+        c = getchar();
+        k();
+        return;
+    }else{
+        error(";,");
+    }
+    rechaza();
+}
+
+void a(){ // 14
+    if(c == 'i'){
+        c = getchar();
+        if(c == '='){
+            c = getchar();
+            aPrima();
+            return;
+        }else{
+            error("=");
+        }
+    }else{
+        error("i");
+    }
+    rechaza();
+}
+
+void a(){ // 15
+    if(c == 's'){
+        c = getchar();
+        return;
+    }else if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
+             c == '['){
+        e();
+        return;
+    }else{
+        error("s(inr[");
+    }
+    rechaza();
+}
+
+void e(){ // 16
+    if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
+        c == '['){
+        t();
+        ePrima();
+        return;
+    }else{
+        error("(inr[");
+    }
+    rechaza();
+}
+
+void ePrima(){ // 17
+    if(c == '+'){
+        c = getchar();
+        t();
+        ePrima();
+        return;
+    }else if(c == '-'){
+        c = getchar();
+        t();
+        ePrima();
+        return;
+    } else if(c == ';' || c == ')'){
+        return;
+    }else{
+        error("+-;)");
+    }
+    rechaza();
+}
+
+void t(){ // 18
+    if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
+        c == '['){
+        f();
+        tPrima();
+        return;
+    }else{
+        error("(inr[");
+    }
+    rechaza();
+}
+
+void tPrima(){ // 19
+    if(c == '*'){
+        c = getchar();
+        f();
+        tPrima();
+        return;
+    }else if(c == '/'){
+        c = getchar();
+        f();
+        tPrima();
+        return;
+    }else if(c == '\\'){
+        c = getchar();
+        f();
+        tPrima();
+        return;
+    }else if(c == '%%'){
+        c = getchar();
+        f();
+        tPrima();
+        return;
+    }else if(c == '^'){
+        c = getchar();
+        f();
+        tPrima();
+        return;
+    }else if(c == '+'|| c == '-' || c == ')' || c== ';'){
+        return;
+    }else{
+        error("*/\\%%^+-);");
+    }
+    rechaza();
+}
+
+void f(){ // 20
+    if(c == '('){
+        c = getchar();
+        E();
+        if(c == ')'){
+            c = getchar();
+            return;
+        }else{
+            error(")");
+        }
+    }else if(c == 'i'){
+        c = getchar();
+        return;
+    }else if(c == 'n'){
+        c = getchar();
+        return;
+    }else if(c == 'r'){
+        c = getchar();
+        return;
+    }else if(c == '['){
+        llama();
+        return;
+    }else{
+        error("(inr[");
+    }
+    rechaza();
+}
+
+void r(){ // 21
+    if(c == 'i'){
+        c = getchar();
+        rPrima();
+        v();
+        return;
+    }else if(c == 'n'){
+        c = getchar();
+        rPrima();
+        vPrima();
+        return;
+    }else if(c == 'r'){
+        c = getchar();
+        rPrima();
+        vBiPrima();
+        return;
+    }else if(c == 's'){
+        c = getchar();
+        rPrima();
+        vTriPrima();
+        return;
+    }else{
+        error("inrs");
+    }
+    rechaza();
+}
+
+void rPrima(){ // 22
+    if(c == '<'){
+        c = getchar();
+        return;
+    }else if(c == '>'){
+        c = getchar();
+        return;
+    }else if(c == 'l'){
+        c = getchar();
+        return;
+    }else if(c == 'e'){
+        c = getchar();
+        return;
+    }else if(c == 'd'){
+        c = getchar();
+        return;
+    }else if(c == 'u'){
+        c = getchar();
+        return;
+    }else{
+        error("<>ledu");
+    }
+    rechaza();
+}
+
+void v(){ // 23
+    if(c == 'i'){
+        c = getchar();
+        return;
+    }else if(c == 'n'){
+        c = getchar();
+        return;
+    }else if(c == 'r'){
+        c = getchar();
+        return;
+    }else if(c == 's'){
+        c = getchar();
+        return;
+    }else{
+        error("inrs");
+    }
+    rechaza();
+}
+
+void vPrima(){ // 24
+    if(c == 'i'){
+        c = getchar();
+        return;
+    }else if(c == 'n'){
+        c = getchar();
+        return;
+    }else{
+        error("in");
+    }
+    rechaza();
+}
+
+void vBiPrima(){ // 25
+    if(c == 'i'){
+        c = getchar();
+        return;
+    }else if(c == 'r'){
+        c = getchar();
+        return;
+    }else{
+        error("ir");
+    }
+    rechaza();
+}
+
+void vTriPrima(){ // 26
+    if(c == 'i'){
+        c = getchar();
+        return;
+    }else if(c == 's'){
+        c = getchar();
+        return;
+    }else{
+        error("is");
+    }
+    rechaza();
+}
+
+void p(){ // 27
+    if(c == 'i'){
+        a();
+        return;
+    }else if(c == 'f'){
+        i();
+        return;
+    }else if(c == 'h'){
+        h();
+        return;
+    }else if(c == 'w'){
+        w();
+        return;
+    }else if(c == 'j'){
+        j();
+        return;
+    }else if(c == '['){
+        llama();
+        return;
+    }else if(c == 'z'){
+        devuelve();
+        return;
+    }else if(c == 'c'){
+        c = getchar();
+        if(c == ';'){
+            c = getchar();
+            return;
+        }else{
+            error(";");
+        }
+    }else{
+        error("ifhwj[zc");
+    }
+    rechaza();
+}
+
+void listaP(){ // 28
+    if(c == '}' || c == 't' || c == ':' || c == 'q' ||
+        c == 'a'|| c == 'o'){
+        return;
+    }else if(c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
+             c == '['|| c == 'z'|| c == 'c'){
+        p();
+        listaP();
+        return;
+    }else{
+        error("}t:qaoifhwj[zc");
+    }
+    rechaza();
+}
+
+void w(){ // 29
+    if(c == 'w'){
+        c = getchar();
+        if(c == '('){
+            c = getchar();
+            r();
+            if(c == ')'){
+                c = getchar();
+                if(c == 'm'){
+                    c = getchar();
+                    if(c == '{'){
+                        c = getchar();
+                        listaP();
+                        if(c == '}'){
+                            c = getchar();
+                            return;
+                        }else{
+                            error("}");
+                        }
+                    }else{
+                        error("{");
+                    }
+                }else{
+                    error("m");
+                }
+            }else{
+                error(")");
+            }
+        }else{
+            error("(");
+        }
+    }else{
+        error("w");
+    }
+    rechaza();
+}
+
+void i(){ // 30
+    if(c == 'f'){
+        c = getchar();
+        if(c == '('){
+            c = getchar();
+            r();
+            if(c == ')'){
+                c = getchar();
+                listaP();
+                iPrima();
+                if(c == ':'){
+                    c = getchar();
+                    return;
+                }else{
+                    error(":");
+                }
+            }else{
+                error(")");
+            }
+        }else{
+            error("(");
+        }
+    }else{
+        error("f");
+    }
+    rechaza();
+}
+
+void iPrima(){ // 31
+    if(c == 't'){
+        c = getchar();
+        listaP();
+        return;
+    }else if(c == ':'){
+        return;
+    }else{
+        error("t:");
+    }
+    rechaza();
+}
+
+void j(){ // 32
+    if(c == 'j'){
+        c = getchar();
+        if(c == '('){
+            c = getchar();
+            y();
+            x();
+            z();
+            if(c == '{'){
+                c = getchar();
+                listaP();
+                if(c == '}'){
+                    c = getchar();
+                    return;
+                }else{
+                    error("}");
+                }
+            }else{
+                error("{");
+            }
+        }else{
+            error("(");
+        }
+    }else{
+        error("j");
+    }
+    rechaza();
+}
+
+void y(){ // 33
+    if(c == 'i'){
+        c = getchar();
+        if(c == '='){
+            c = getchar();
+            e();
+            if(c == ';'){
+                c = getchar();
+                return;
+            }else{
+                error(";");
+            }
+        }else{
+            error("=");
+        }
+    }else if(c == ';'){
+        c = getchar();
+        return;
+    }else{
+        error("i;");
+    }
+    rechaza();
+}
+
+void x(){ // 34
+    if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+        r();
+        if(c == ';'){
+            c = getchar();
+            return;
+        }else{
+            error(";");
+        }
+    }else if(c == ';'){
+        c = getchar();
+        return;
+    }else{
+        error("inrs;");
+    }
+    rechaza();
+}
+
+void z(){ // 35
+    if(c == 'i'){
+        c = getchar();
+        if(c == '='){
+            c = getchar();
+            e();
+            if(c == ')'){
+                c = getchar();
+                return;
+            }else{
+                error(")");
+            }
+        }else{
+            error("=");
+        }
+    }else if(c == ')'){
+        c = getchar();
+        return;
+    }else{
+        error("i)");
+    }
+    rechaza();
+}
+
+void h(){ // 36
+    if(c == 'h'){
+        c = getchar();
+        if(c == '('){
+            c = getchar();
+            if(c == 'i'){
+                c = getchar();
+                if(c == ')'){
+                    c = getchar();
+                    if(c == '{'){
+                        c = getchar();
+                        cPrima();
+                        oPrima();
+                        if(c == '}'){
+                            c = getchar();
+                            return;
+                        }else{
+                            error("}");
+                        }
+                    }else{
+                        error("{");
+                    }
+                }else{
+                    error(")");
+                }
+            }else{
+                error("i");
+            }
+        }else{
+            error("(");
+        }
+    }else{
+        error("h");
+    }
+    rechaza();
+}
+
+void cPrima(){ // 37
+    if(c == 'a'){
+        c = getchar();
+        if(c == 'n'){
+            c = getchar();
+            if(c == ':'){
+                c = getchar();
+                listaP();
+                u();
+                cPrima();
+                return;
+            }else{
+                error(":");
+            }
+        }else{
+            error("n");
+        }
+    }else if(c == 'o' || c == '}'){
+        return;
+    }else{
+        error("ao}");
+    }
+    rechaza();
+}
+
+void oPrima(){ // 38
+    if(c == 'o'){
+        c = getchar();
+        if(c == ':'){
+            c = getchar();
+            listaP();
+            return;
+        }else{
+            error(":");
+        }
+    }else if(c == '}'){
+        return;
+    }else{
+        error("o}");
+    }
+    rechaza();
+}
+
+void u(){ // 39
+    if(c == 'q'){
+        c = getchar();
+        return;
+    }else if(c == 'a' || c == 'o' || c == '}'){
+        return;
+    }else{
+        error("qao}");
+    }
+    rechaza();
+}
+
+void devuelve(){ // 40
+    if(c == 'z'){
+        c = getchar();
+        if(c == '('){
+            c = getchar();
+            valor();
+            if(c == ')'){
+                c = getchar();
+                if(c == ';'){
+                    c = getchar();
+                    return;
+                }else{
+                    error(";");
+                }
+            }else{
+                error(")");
+            }
+        }else{
+            error("(");
+        }
+    }else{
+        error("z");
+    }
+    rechaza();
+}
+
+void valor(){ // 41
+    if(c == ')'){
+        return;
+    }else if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+        v();
+        return;
+    }else{
+        error("inrs)");
+    }
+    rechaza();
+}
+
+void llama(){ // 42
+    if(c == '['){
+        c = getchar();
+        if(c == 'i'){
+            c = getchar();
+            if(c == '('){
+                c = getchar();
+                arg();
+                if(c == ')'){
+                    c = getchar();
+                    if(c == ']'){
+                        c = getchar();
+                        return;
+                    }else{
+                        error("]");
+                    }
+                }else{
+                    error(")");
+                }
+            }else{
+                error("(");
+            }
+        }else{
+            error("i");
+        }
+    }else{
+        error("[");
+    }
+    rechaza();
+}
+
+void arg(){ // 43
+    if(c == ')'){
+        return;
+    }else if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+        v();
+        otroArg();
+        return;
+    }else{
+        error(")inrs");
+    }
+    rechaza();
+}
+
+void otroArg(){ // 44
+    if(c == ')'){
+        return;
+    }else if(c == ','){
+        c = getchar();
+        v();
+        otroArg();
+    }else{
+        error("),");
+    }
+    rechaza();
+}
+
 // Estructuras necesarias para las tablas:
 
 // Para las linked lists
@@ -423,6 +1382,8 @@ int main(int argc, char *argv[]){
   if(argc > 1){
     // Se indica que se leera dicho archivo
     yyin = fopen(argv[1],"r");
+    // Se inicializa cadena de atomos
+    iniciaCadena();
     // Se ejecuta lex
     yylex();
     // Se cierra el flujo del archivo
@@ -432,6 +1393,12 @@ int main(int argc, char *argv[]){
     obtenerArchivoSalidaTXT();
     // Se muestra la salida del programa
     mostrarSalida();
+    
+    printf("\n###########################\n");
+    printf("ANALIZADOR SINTACTICO\n");
+    c = getchar();
+    program();
+    veredicto();
   }else{
     // La entrada sera por teclado
     yylex();
