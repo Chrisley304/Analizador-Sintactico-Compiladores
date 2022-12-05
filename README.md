@@ -1,8 +1,8 @@
-# Analizador Lexico Compiladores
+# Analizador Síntactico Compiladores
 
-Este repo contiene un analizador léxico creado para la materia **Compiladores** en el semestre **2023-1**.
+Este repo contiene un analizador sintactico creado para la materia **Compiladores** en el semestre **2023-1**.
 
-El analizador esta creado en *Lex*.
+El analizador esta creado en *Lex* a partir del analizador lexico creado anteriormente que se puede consultar [aquí](https://github.com/Chrisley304/Analizador-Lexico-Compiladores).
 
 ## Uso
 
