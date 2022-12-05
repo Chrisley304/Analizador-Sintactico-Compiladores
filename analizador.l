@@ -163,7 +163,6 @@ digSieteCero [0-7]
 digSieteUno [1-7]
 constantesNumEnt 0|({digUno}({digCero})*)
 constantesNumOct (o|O)0|(o|O)({digSieteUno}({digSieteCero})*)
-ConstantesNum {constantesNumEnt}|{constantesNumOct}
 constantesRealDec 0|{digCero}*{digUno}
 ConstantesReal {constantesNumEnt}\.{constantesRealDec}
 ConstantesCad \"[^"'\n]([^"'\n])+\"|'[^'\n]'|\"'\"
@@ -204,10 +203,27 @@ FinDeLinea " "+|\n|\t
 {CerosInicio} {
   printf("Error: %s\n", yytext);
 }
-{ConstantesNum} {
+{constantesNumEnt} {
   contTokens++;
   // Se añade a la tabla de tokens
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,2,yytext);
+  agregarALista(tokensList,tempToken);
+}
+{constantesNumOct} {
+  contTokens++;
+  // Antes de añadir a la tabla de tokens, se convierte el numero a decimal
+  // Se utiliza una cadena auxiliar "ignorar" la 'o' que se ingresa y colocar un 0 en su lugar
+  char* copiaNumeroStr;
+  copiaNumeroStr = (char*)malloc(strlen(yytext));
+  strcpy(copiaNumeroStr, yytext);
+  // Se cambia la 'o'|'O' por un 0 y se convierte a entero la cadena
+  copiaNumeroStr[0] = '0';
+  // Con la funcion strtol se convierte el numero en str a octal colocando la funcion en base 8:
+  int numeroDecimal = strtol(copiaNumeroStr, NULL, 8);
+  // printf("Numero octal ingresado: %o\n",numero);
+  // printf("Numero decimal ingresado: %d\n",numero);
+  // Se añade a la tabla de tokens
+  struct Nodo *tempToken = crearNuevoNodoToken(contTokens,2,parseInttoString(numeroDecimal));
   agregarALista(tokensList,tempToken);
 }
 {ConstantesReal} {
