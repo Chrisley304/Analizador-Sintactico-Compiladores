@@ -21,13 +21,13 @@ FILE *archSal; // Archivo de salida
 char cadena[4000];
 int atomo = 0;
 int errores = 0;
+char actual = 'a';
 
 // Firma de funciones de analizador sintáctico
-void getchar();
-void error(char*)
+char getcharatomo ();
+void error(char*);
 void program();
 void veredicto();
-void rechaza();
 void otraFunc();
 void func();
 void param();
@@ -78,7 +78,7 @@ void error(char * error){
     errores ++;
 }
 
-void getchar(){
+char getcharatomo (){
     return cadena[atomo++];
 }
 
@@ -99,44 +99,44 @@ void iniciaCadena(){
 
 // Definición de funciones de analizador sintáctico
 void program(){ // 1
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         func();
-        otrafunc();
+        otraFunc();
         return;
     }else{
         error("bg#yx");
     }
-    rechaza();
+    
 }
 
 void otraFunc(){ // 2
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         func();
-        otrafunc();
+        otraFunc();
         return;
-    }else if(c == '_'){
+    }else if(actual == '_'){
         return;
     }else{
         error("bg#yx_");
     }
-    rechaza();
+    
 }
 
 void func(){ // 3
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         tipo();
-        if(c == 'i'){
-            c = getchar();
-            if(c == '('){
-                c = getchar();
+        if(actual == 'i'){
+            actual = getcharatomo ();
+            if(actual == '('){
+                actual = getcharatomo ();
                 param();
-                if(c == ')'){
-                    c = getchar();
-                    if(c == '{'){
-                        c = getchar();
+                if(actual == ')'){
+                    actual = getcharatomo ();
+                    if(actual == '{'){
+                        actual = getcharatomo ();
                         cuerpo();
-                        if(c == '}'){
-                            c = getchar();
+                        if(actual == '}'){
+                            actual = getcharatomo ();
                             return;
                         }else{
                             error("}");
@@ -156,79 +156,79 @@ void func(){ // 3
     }else{
         error("bg#yx");
     }
-    rechaza();
+    
 }
 
 void param(){ // 4
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         tipo();
-        if(c == 'i'){
-            c = getchar();
-            otroparam();
+        if(actual == 'i'){
+            actual = getcharatomo ();
+            otroParam();
             return;
         }else{
             error("i");
         }
-    }else if(c == ')'){
+    }else if(actual == ')'){
         return;
     }else{
         error("bg#yx)");
     }
-    rechaza();
+    
 }
 
 void otroParam(){ // 5
-    if(c == ','){
-        c = getchar();
+    if(actual == ','){
+        actual = getcharatomo ();
         tipo();
-        if(c == 'i'){
-            c = getchar();
-            otroparam();
+        if(actual == 'i'){
+            actual = getcharatomo ();
+            otroParam();
             return;
         }else{
             error("i");
         }
-    }else if(c == ')'){
+    }else if(actual == ')'){
         return;
     }else{
         error(",)");
     }
-    rechaza();
+    
 }
 
 void cuerpo(){ // 6
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'||
-        c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
-        c == '}'|| c == '['|| c == 'z'|| c == 'c'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'||
+        actual == 'i'|| actual == 'f'|| actual == 'h'|| actual == 'w'|| actual == 'j'|| 
+        actual == '}'|| actual == '['|| actual == 'z'|| actual == 'c'){
         decl();
         listaP();
         return;
     }else{
         error("bg#yxifhwj}[zc");
     }
-    rechaza();
+    
 }
 
 void decl(){ // 7
-    if(c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
-        c == '}'|| c == '['|| c == 'z'|| c == 'c'){
+    if(actual == 'i'|| actual == 'f'|| actual == 'h'|| actual == 'w'|| actual == 'j'|| 
+        actual == '}'|| actual == '['|| actual == 'z'|| actual == 'c'){
         return;
-    }else if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    }else if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         d();
         decl();
         return;
     }else{
         error("bg#yxifhwj}[zc");
     }
-    rechaza();
+    
 }
 
 void d(){ // 8
-    if(c == 'b'|| c == 'g'|| c == '#'|| c == 'y'|| c == 'x'){
+    if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
         tipo();
         k();
-        if(c == ';'){
-            c = getchar();
+        if(actual == ';'){
+            actual = getcharatomo ();
             return;
         }else{
             error(";");
@@ -236,95 +236,95 @@ void d(){ // 8
     }else{
         error("bg#yx");
     }
-    rechaza();
+    
 }
 
 void tipo(){ // 9
-    if(c == 'b'){
-        c = getchar();
+    if(actual == 'b'){
+        actual = getcharatomo ();
         return;
-    }else if( c == 'g'){
-        c = getchar();
+    }else if( actual == 'g'){
+        actual = getcharatomo ();
         return;
-    }else if( c == '#'){
-        c = getchar();
+    }else if( actual == '#'){
+        actual = getcharatomo ();
         return;
-    }else if( c == 'y'){
-        c = getchar();
+    }else if( actual == 'y'){
+        actual = getcharatomo ();
         return;
-    }else if( c == 'x'){
-        c = getchar();
+    }else if( actual == 'x'){
+        actual = getcharatomo ();
         return;
     }else{
         error("bg#yx");
     }
-    rechaza();
+    
 }
 
 
 void k(){ // 10
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         q();
         return;
     }else{
         error("i");
     }
-    rechaza();
+    
 }
 
 void q(){ // 11
-    if(c == ';'){
+    if(actual == ';'){
         return;
-    }else if(c == '='){
-        c = getchar();
+    }else if(actual == '='){
+        actual = getcharatomo ();
         n();
         c();
         return;
-    }else if(c == ','){
-        c = getchar();
+    }else if(actual == ','){
+        actual = getcharatomo ();
         k();
         return;
     }else{
         error(";=,");
     }
-    rechaza();
+    
 }
 
 void n(){ // 12
-    if(c == 'n'){
-        c = getchar();
+    if(actual == 'n'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'r'){
-        c = getchar();
+    }else if(actual == 'r'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 's'){
-        c = getchar();
+    }else if(actual == 's'){
+        actual = getcharatomo ();
         return;
     }else{
         error("nrs");
     }
-    rechaza();
+    
 }
 
-void d(){ // 13
-    if(c == ';'){
+void c(){ // 13
+    if(actual == ';'){
         return;
-    }else if(c == ','){
-        c = getchar();
+    }else if(actual == ','){
+        actual = getcharatomo ();
         k();
         return;
     }else{
         error(";,");
     }
-    rechaza();
+    
 }
 
 void a(){ // 14
-    if(c == 'i'){
-        c = getchar();
-        if(c == '='){
-            c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
+        if(actual == '='){
+            actual = getcharatomo ();
             aPrima();
             return;
         }else{
@@ -333,264 +333,264 @@ void a(){ // 14
     }else{
         error("i");
     }
-    rechaza();
+    
 }
 
-void a(){ // 15
-    if(c == 's'){
-        c = getchar();
+void aPrima(){ // 15
+    if(actual == 's'){
+        actual = getcharatomo ();
         return;
-    }else if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
-             c == '['){
+    }else if(actual == '(' || actual == 'i' || actual == 'n' || actual == 'r' ||
+             actual == '['){
         e();
         return;
     }else{
         error("s(inr[");
     }
-    rechaza();
+    
 }
 
 void e(){ // 16
-    if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
-        c == '['){
+    if(actual == '(' || actual == 'i' || actual == 'n' || actual == 'r' ||
+        actual == '['){
         t();
         ePrima();
         return;
     }else{
         error("(inr[");
     }
-    rechaza();
+    
 }
 
 void ePrima(){ // 17
-    if(c == '+'){
-        c = getchar();
+    if(actual == '+'){
+        actual = getcharatomo ();
         t();
         ePrima();
         return;
-    }else if(c == '-'){
-        c = getchar();
+    }else if(actual == '-'){
+        actual = getcharatomo ();
         t();
         ePrima();
         return;
-    } else if(c == ';' || c == ')'){
+    } else if(actual == ';' || actual == ')'){
         return;
     }else{
         error("+-;)");
     }
-    rechaza();
+    
 }
 
 void t(){ // 18
-    if(c == '(' || c == 'i' || c == 'n' || c == 'r' ||
-        c == '['){
+    if(actual == '(' || actual == 'i' || actual == 'n' || actual == 'r' ||
+        actual == '['){
         f();
         tPrima();
         return;
     }else{
         error("(inr[");
     }
-    rechaza();
+    
 }
 
 void tPrima(){ // 19
-    if(c == '*'){
-        c = getchar();
+    if(actual == '*'){
+        actual = getcharatomo ();
         f();
         tPrima();
         return;
-    }else if(c == '/'){
-        c = getchar();
+    }else if(actual == '/'){
+        actual = getcharatomo ();
         f();
         tPrima();
         return;
-    }else if(c == '\\'){
-        c = getchar();
+    }else if(actual == '\\'){
+        actual = getcharatomo ();
         f();
         tPrima();
         return;
-    }else if(c == '%%'){
-        c = getchar();
+    }else if(actual == '%'){
+        actual = getcharatomo ();
         f();
         tPrima();
         return;
-    }else if(c == '^'){
-        c = getchar();
+    }else if(actual == '^'){
+        actual = getcharatomo ();
         f();
         tPrima();
         return;
-    }else if(c == '+'|| c == '-' || c == ')' || c== ';'){
+    }else if(actual == '+'|| actual == '-' || actual == ')' || actual == ';'){
         return;
     }else{
         error("*/\\%%^+-);");
     }
-    rechaza();
+    
 }
 
 void f(){ // 20
-    if(c == '('){
-        c = getchar();
-        E();
-        if(c == ')'){
-            c = getchar();
+    if(actual == '('){
+        actual = getcharatomo ();
+        e();
+        if(actual == ')'){
+            actual = getcharatomo ();
             return;
         }else{
             error(")");
         }
-    }else if(c == 'i'){
-        c = getchar();
+    }else if(actual == 'i'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'n'){
-        c = getchar();
+    }else if(actual == 'n'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'r'){
-        c = getchar();
+    }else if(actual == 'r'){
+        actual = getcharatomo ();
         return;
-    }else if(c == '['){
+    }else if(actual == '['){
         llama();
         return;
     }else{
         error("(inr[");
     }
-    rechaza();
+    
 }
 
 void r(){ // 21
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         rPrima();
         v();
         return;
-    }else if(c == 'n'){
-        c = getchar();
+    }else if(actual == 'n'){
+        actual = getcharatomo ();
         rPrima();
         vPrima();
         return;
-    }else if(c == 'r'){
-        c = getchar();
+    }else if(actual == 'r'){
+        actual = getcharatomo ();
         rPrima();
         vBiPrima();
         return;
-    }else if(c == 's'){
-        c = getchar();
+    }else if(actual == 's'){
+        actual = getcharatomo ();
         rPrima();
         vTriPrima();
         return;
     }else{
         error("inrs");
     }
-    rechaza();
+    
 }
 
 void rPrima(){ // 22
-    if(c == '<'){
-        c = getchar();
+    if(actual == '<'){
+        actual = getcharatomo ();
         return;
-    }else if(c == '>'){
-        c = getchar();
+    }else if(actual == '>'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'l'){
-        c = getchar();
+    }else if(actual == 'l'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'e'){
-        c = getchar();
+    }else if(actual == 'e'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'd'){
-        c = getchar();
+    }else if(actual == 'd'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'u'){
-        c = getchar();
+    }else if(actual == 'u'){
+        actual = getcharatomo ();
         return;
     }else{
         error("<>ledu");
     }
-    rechaza();
+    
 }
 
 void v(){ // 23
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'n'){
-        c = getchar();
+    }else if(actual == 'n'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'r'){
-        c = getchar();
+    }else if(actual == 'r'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 's'){
-        c = getchar();
+    }else if(actual == 's'){
+        actual = getcharatomo ();
         return;
     }else{
         error("inrs");
     }
-    rechaza();
+    
 }
 
 void vPrima(){ // 24
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'n'){
-        c = getchar();
+    }else if(actual == 'n'){
+        actual = getcharatomo ();
         return;
     }else{
         error("in");
     }
-    rechaza();
+    
 }
 
 void vBiPrima(){ // 25
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'r'){
-        c = getchar();
+    }else if(actual == 'r'){
+        actual = getcharatomo ();
         return;
     }else{
         error("ir");
     }
-    rechaza();
+    
 }
 
 void vTriPrima(){ // 26
-    if(c == 'i'){
-        c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 's'){
-        c = getchar();
+    }else if(actual == 's'){
+        actual = getcharatomo ();
         return;
     }else{
         error("is");
     }
-    rechaza();
+    
 }
 
 void p(){ // 27
-    if(c == 'i'){
+    if(actual == 'i'){
         a();
         return;
-    }else if(c == 'f'){
+    }else if(actual == 'f'){
         i();
         return;
-    }else if(c == 'h'){
+    }else if(actual == 'h'){
         h();
         return;
-    }else if(c == 'w'){
+    }else if(actual == 'w'){
         w();
         return;
-    }else if(c == 'j'){
+    }else if(actual == 'j'){
         j();
         return;
-    }else if(c == '['){
+    }else if(actual == '['){
         llama();
         return;
-    }else if(c == 'z'){
+    }else if(actual == 'z'){
         devuelve();
         return;
-    }else if(c == 'c'){
-        c = getchar();
-        if(c == ';'){
-            c = getchar();
+    }else if(actual == 'c'){
+        actual = getcharatomo ();
+        if(actual == ';'){
+            actual = getcharatomo ();
             return;
         }else{
             error(";");
@@ -598,39 +598,39 @@ void p(){ // 27
     }else{
         error("ifhwj[zc");
     }
-    rechaza();
+    
 }
 
 void listaP(){ // 28
-    if(c == '}' || c == 't' || c == ':' || c == 'q' ||
-        c == 'a'|| c == 'o'){
+    if(actual == '}' || actual == 't' || actual == ':' || actual == 'q' ||
+        actual == 'a'|| actual == 'o'){
         return;
-    }else if(c == 'i'|| c == 'f'|| c == 'h'|| c == 'w'|| c == 'j'|| 
-             c == '['|| c == 'z'|| c == 'c'){
+    }else if(actual == 'i'|| actual == 'f'|| actual == 'h'|| actual == 'w'|| actual == 'j'|| 
+             actual == '['|| actual == 'z'|| actual == 'c'){
         p();
         listaP();
         return;
     }else{
         error("}t:qaoifhwj[zc");
     }
-    rechaza();
+    
 }
 
 void w(){ // 29
-    if(c == 'w'){
-        c = getchar();
-        if(c == '('){
-            c = getchar();
+    if(actual == 'w'){
+        actual = getcharatomo ();
+        if(actual == '('){
+            actual = getcharatomo ();
             r();
-            if(c == ')'){
-                c = getchar();
-                if(c == 'm'){
-                    c = getchar();
-                    if(c == '{'){
-                        c = getchar();
+            if(actual == ')'){
+                actual = getcharatomo ();
+                if(actual == 'm'){
+                    actual = getcharatomo ();
+                    if(actual == '{'){
+                        actual = getcharatomo ();
                         listaP();
-                        if(c == '}'){
-                            c = getchar();
+                        if(actual == '}'){
+                            actual = getcharatomo ();
                             return;
                         }else{
                             error("}");
@@ -650,21 +650,21 @@ void w(){ // 29
     }else{
         error("w");
     }
-    rechaza();
+    
 }
 
 void i(){ // 30
-    if(c == 'f'){
-        c = getchar();
-        if(c == '('){
-            c = getchar();
+    if(actual == 'f'){
+        actual = getcharatomo ();
+        if(actual == '('){
+            actual = getcharatomo ();
             r();
-            if(c == ')'){
-                c = getchar();
+            if(actual == ')'){
+                actual = getcharatomo ();
                 listaP();
                 iPrima();
-                if(c == ':'){
-                    c = getchar();
+                if(actual == ':'){
+                    actual = getcharatomo ();
                     return;
                 }else{
                     error(":");
@@ -678,35 +678,35 @@ void i(){ // 30
     }else{
         error("f");
     }
-    rechaza();
+    
 }
 
 void iPrima(){ // 31
-    if(c == 't'){
-        c = getchar();
+    if(actual == 't'){
+        actual = getcharatomo ();
         listaP();
         return;
-    }else if(c == ':'){
+    }else if(actual == ':'){
         return;
     }else{
         error("t:");
     }
-    rechaza();
+    
 }
 
 void j(){ // 32
-    if(c == 'j'){
-        c = getchar();
-        if(c == '('){
-            c = getchar();
+    if(actual == 'j'){
+        actual = getcharatomo ();
+        if(actual == '('){
+            actual = getcharatomo ();
             y();
             x();
             z();
-            if(c == '{'){
-                c = getchar();
+            if(actual == '{'){
+                actual = getcharatomo ();
                 listaP();
-                if(c == '}'){
-                    c = getchar();
+                if(actual == '}'){
+                    actual = getcharatomo ();
                     return;
                 }else{
                     error("}");
@@ -720,17 +720,17 @@ void j(){ // 32
     }else{
         error("j");
     }
-    rechaza();
+    
 }
 
 void y(){ // 33
-    if(c == 'i'){
-        c = getchar();
-        if(c == '='){
-            c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
+        if(actual == '='){
+            actual = getcharatomo ();
             e();
-            if(c == ';'){
-                c = getchar();
+            if(actual == ';'){
+                actual = getcharatomo ();
                 return;
             }else{
                 error(";");
@@ -738,41 +738,41 @@ void y(){ // 33
         }else{
             error("=");
         }
-    }else if(c == ';'){
-        c = getchar();
+    }else if(actual == ';'){
+        actual = getcharatomo ();
         return;
     }else{
         error("i;");
     }
-    rechaza();
+    
 }
 
 void x(){ // 34
-    if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+    if(actual == 'i'|| actual == 'n'|| actual == 'r'|| actual == 's'){
         r();
-        if(c == ';'){
-            c = getchar();
+        if(actual == ';'){
+            actual = getcharatomo ();
             return;
         }else{
             error(";");
         }
-    }else if(c == ';'){
-        c = getchar();
+    }else if(actual == ';'){
+        actual = getcharatomo ();
         return;
     }else{
         error("inrs;");
     }
-    rechaza();
+    
 }
 
 void z(){ // 35
-    if(c == 'i'){
-        c = getchar();
-        if(c == '='){
-            c = getchar();
+    if(actual == 'i'){
+        actual = getcharatomo ();
+        if(actual == '='){
+            actual = getcharatomo ();
             e();
-            if(c == ')'){
-                c = getchar();
+            if(actual == ')'){
+                actual = getcharatomo ();
                 return;
             }else{
                 error(")");
@@ -780,30 +780,30 @@ void z(){ // 35
         }else{
             error("=");
         }
-    }else if(c == ')'){
-        c = getchar();
+    }else if(actual == ')'){
+        actual = getcharatomo ();
         return;
     }else{
         error("i)");
     }
-    rechaza();
+    
 }
 
 void h(){ // 36
-    if(c == 'h'){
-        c = getchar();
-        if(c == '('){
-            c = getchar();
-            if(c == 'i'){
-                c = getchar();
-                if(c == ')'){
-                    c = getchar();
-                    if(c == '{'){
-                        c = getchar();
+    if(actual == 'h'){
+        actual = getcharatomo ();
+        if(actual == '('){
+            actual = getcharatomo ();
+            if(actual == 'i'){
+                actual = getcharatomo ();
+                if(actual == ')'){
+                    actual = getcharatomo ();
+                    if(actual == '{'){
+                        actual = getcharatomo ();
                         cPrima();
                         oPrima();
-                        if(c == '}'){
-                            c = getchar();
+                        if(actual == '}'){
+                            actual = getcharatomo ();
                             return;
                         }else{
                             error("}");
@@ -823,16 +823,16 @@ void h(){ // 36
     }else{
         error("h");
     }
-    rechaza();
+    
 }
 
 void cPrima(){ // 37
-    if(c == 'a'){
-        c = getchar();
-        if(c == 'n'){
-            c = getchar();
-            if(c == ':'){
-                c = getchar();
+    if(actual == 'a'){
+        actual = getcharatomo ();
+        if(actual == 'n'){
+            actual = getcharatomo ();
+            if(actual == ':'){
+                actual = getcharatomo ();
                 listaP();
                 u();
                 cPrima();
@@ -843,54 +843,54 @@ void cPrima(){ // 37
         }else{
             error("n");
         }
-    }else if(c == 'o' || c == '}'){
+    }else if(actual == 'o' || actual == '}'){
         return;
     }else{
         error("ao}");
     }
-    rechaza();
+    
 }
 
 void oPrima(){ // 38
-    if(c == 'o'){
-        c = getchar();
-        if(c == ':'){
-            c = getchar();
+    if(actual == 'o'){
+        actual = getcharatomo ();
+        if(actual == ':'){
+            actual = getcharatomo ();
             listaP();
             return;
         }else{
             error(":");
         }
-    }else if(c == '}'){
+    }else if(actual == '}'){
         return;
     }else{
         error("o}");
     }
-    rechaza();
+    
 }
 
 void u(){ // 39
-    if(c == 'q'){
-        c = getchar();
+    if(actual == 'q'){
+        actual = getcharatomo ();
         return;
-    }else if(c == 'a' || c == 'o' || c == '}'){
+    }else if(actual == 'a' || actual == 'o' || actual == '}'){
         return;
     }else{
         error("qao}");
     }
-    rechaza();
+    
 }
 
 void devuelve(){ // 40
-    if(c == 'z'){
-        c = getchar();
-        if(c == '('){
-            c = getchar();
+    if(actual == 'z'){
+        actual = getcharatomo ();
+        if(actual == '('){
+            actual = getcharatomo ();
             valor();
-            if(c == ')'){
-                c = getchar();
-                if(c == ';'){
-                    c = getchar();
+            if(actual == ')'){
+                actual = getcharatomo ();
+                if(actual == ';'){
+                    actual = getcharatomo ();
                     return;
                 }else{
                     error(";");
@@ -904,33 +904,33 @@ void devuelve(){ // 40
     }else{
         error("z");
     }
-    rechaza();
+    
 }
 
 void valor(){ // 41
-    if(c == ')'){
+    if(actual == ')'){
         return;
-    }else if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+    }else if(actual == 'i'|| actual == 'n'|| actual == 'r'|| actual == 's'){
         v();
         return;
     }else{
         error("inrs)");
     }
-    rechaza();
+    
 }
 
 void llama(){ // 42
-    if(c == '['){
-        c = getchar();
-        if(c == 'i'){
-            c = getchar();
-            if(c == '('){
-                c = getchar();
+    if(actual == '['){
+        actual = getcharatomo ();
+        if(actual == 'i'){
+            actual = getcharatomo ();
+            if(actual == '('){
+                actual = getcharatomo ();
                 arg();
-                if(c == ')'){
-                    c = getchar();
-                    if(c == ']'){
-                        c = getchar();
+                if(actual == ')'){
+                    actual = getcharatomo ();
+                    if(actual == ']'){
+                        actual = getcharatomo ();
                         return;
                     }else{
                         error("]");
@@ -947,33 +947,33 @@ void llama(){ // 42
     }else{
         error("[");
     }
-    rechaza();
+    
 }
 
 void arg(){ // 43
-    if(c == ')'){
+    if(actual == ')'){
         return;
-    }else if(c == 'i'|| c == 'n'|| c == 'r'|| c == 's'){
+    }else if(actual == 'i'|| actual == 'n'|| actual == 'r'|| actual == 's'){
         v();
         otroArg();
         return;
     }else{
         error(")inrs");
     }
-    rechaza();
+    
 }
 
 void otroArg(){ // 44
-    if(c == ')'){
+    if(actual == ')'){
         return;
-    }else if(c == ','){
-        c = getchar();
+    }else if(actual == ','){
+        actual = getcharatomo ();
         v();
         otroArg();
     }else{
         error("),");
     }
-    rechaza();
+    
 }
 
 // Estructuras necesarias para las tablas:
@@ -1396,7 +1396,7 @@ int main(int argc, char *argv[]){
     
     printf("\n###########################\n");
     printf("ANALIZADOR SINTACTICO\n");
-    c = getchar();
+    actual = getcharatomo ();
     program();
     veredicto();
   }else{
