@@ -6,7 +6,7 @@
   Integrantes:
     - Núñez Quintana Luis Axel 
     - Leyva Mercado Christian Alejandro
-  Fecha de elaboración: 01 de noviembre del 2022
+  Fecha de elaboración: 05 de diciembre del 2022
 */
 
 // Bibliotecas/Headers
@@ -83,7 +83,7 @@ char getcharatomo (){
 }
 
 void veredicto(){
-    if (errores = 0){
+    if (errores == 0){
         printf("No hay errores en el analisis sintactico\n");
     }else{
         printf("En el analisis sintactico hubo %d errores \n", errores);
