@@ -19,13 +19,14 @@ FILE *archSal; // Archivo de salida
 
 // Variables analizador sintáctico
 char cadena[4000];
+int insertaAtomo =0;
 int atomo = 0;
 int errores = 0;
 char actual = 'a';
 
 // Firma de funciones de analizador sintáctico
 char getcharatomo ();
-void error(char*);
+void error(char*, char*);
 void program();
 void veredicto();
 void otraFunc();
@@ -73,8 +74,9 @@ void arg();
 void otroArg();
 
 // Definción de funciones auxiliares de analizador sintáctico
-void error(char * error){
-    printf("Error al analizar atomo %d: %c, se esperaba %s \n",atomo, cadena[atomo], error);
+void error(char * error, char* origen){
+    printf("Error al analizar atomo %d: %c, se esperaba %s \n",atomo, cadena[atomo - 1], error);
+    printf("Lanzado desde %s\n", origen);
     errores ++;
 }
 
@@ -83,7 +85,7 @@ char getcharatomo (){
 }
 
 void veredicto(){
-    if (errores = 0){
+    if (errores == 0){
         printf("No hay errores en el analisis sintactico\n");
     }else{
         printf("En el analisis sintactico hubo %d errores \n", errores);
@@ -97,6 +99,22 @@ void iniciaCadena(){
     }
 }
 
+void muestraCadena(){
+    printf("Cadena de átomos: \n");
+    int i = 0;
+    printf(" 1: ");
+    for(i = 0; i < 4000; i ++){
+        if((i + 1) % 10 == 0){
+            printf("\n %d: ", i + 1);
+        }
+        printf("%c ", cadena[i]);
+        if(cadena[i] == '_'){
+            break;
+        }
+    }
+    printf("\n");
+}
+
 // Definición de funciones de analizador sintáctico
 void program(){ // 1
     if(actual == 'b'|| actual == 'g'|| actual == '#'|| actual == 'y'|| actual == 'x'){
@@ -104,7 +122,7 @@ void program(){ // 1
         otraFunc();
         return;
     }else{
-        error("bg#yx");
+        error("bg#yx","program");
     }
     
 }
@@ -117,7 +135,7 @@ void otraFunc(){ // 2
     }else if(actual == '_'){
         return;
     }else{
-        error("bg#yx_");
+        error("bg#yx_","otraFunc");
     }
     
 }
@@ -139,22 +157,22 @@ void func(){ // 3
                             actual = getcharatomo ();
                             return;
                         }else{
-                            error("}");
+                            error("}","func");
                         }
                     }else{
-                        error("{");
+                        error("{","func");
                     }
                 }else{
-                    error(")");
+                    error(")","func");
                 }
             }else{
-                error("(");
+                error("(","func");
             }
         }else{
-            error("i");
+            error("i","func");
         }
     }else{
-        error("bg#yx");
+        error("bg#yx","func");
     }
     
 }
@@ -167,12 +185,12 @@ void param(){ // 4
             otroParam();
             return;
         }else{
-            error("i");
+            error("i","param");
         }
     }else if(actual == ')'){
         return;
     }else{
-        error("bg#yx)");
+        error("bg#yx)","param");
     }
     
 }
@@ -186,12 +204,12 @@ void otroParam(){ // 5
             otroParam();
             return;
         }else{
-            error("i");
+            error("i","otroParam");
         }
     }else if(actual == ')'){
         return;
     }else{
-        error(",)");
+        error(",)","otroParam");
     }
     
 }
@@ -204,7 +222,7 @@ void cuerpo(){ // 6
         listaP();
         return;
     }else{
-        error("bg#yxifhwj}[zc");
+        error("bg#yxifhwj}[zc","cuerpo");
     }
     
 }
@@ -218,7 +236,7 @@ void decl(){ // 7
         decl();
         return;
     }else{
-        error("bg#yxifhwj}[zc");
+        error("bg#yxifhwj}[zc","decl");
     }
     
 }
@@ -231,10 +249,10 @@ void d(){ // 8
             actual = getcharatomo ();
             return;
         }else{
-            error(";");
+            error(";","d");
         }
     }else{
-        error("bg#yx");
+        error("bg#yx","d");
     }
     
 }
@@ -256,7 +274,7 @@ void tipo(){ // 9
         actual = getcharatomo ();
         return;
     }else{
-        error("bg#yx");
+        error("bg#yx","tipo");
     }
     
 }
@@ -268,7 +286,7 @@ void k(){ // 10
         q();
         return;
     }else{
-        error("i");
+        error("i","k");
     }
     
 }
@@ -286,7 +304,7 @@ void q(){ // 11
         k();
         return;
     }else{
-        error(";=,");
+        error(";=,","q");
     }
     
 }
@@ -302,7 +320,7 @@ void n(){ // 12
         actual = getcharatomo ();
         return;
     }else{
-        error("nrs");
+        error("nrs","n");
     }
     
 }
@@ -315,7 +333,7 @@ void c(){ // 13
         k();
         return;
     }else{
-        error(";,");
+        error(";,","c");
     }
     
 }
@@ -326,12 +344,15 @@ void a(){ // 14
         if(actual == '='){
             actual = getcharatomo ();
             aPrima();
-            return;
+            if(actual == ';'){
+                actual = getcharatomo();
+                return;
+            }
         }else{
-            error("=");
+            error("=","a");
         }
     }else{
-        error("i");
+        error("i","a");
     }
     
 }
@@ -345,7 +366,7 @@ void aPrima(){ // 15
         e();
         return;
     }else{
-        error("s(inr[");
+        error("s(inr[","aPrima");
     }
     
 }
@@ -357,7 +378,7 @@ void e(){ // 16
         ePrima();
         return;
     }else{
-        error("(inr[");
+        error("(inr[","e");
     }
     
 }
@@ -376,7 +397,7 @@ void ePrima(){ // 17
     } else if(actual == ';' || actual == ')'){
         return;
     }else{
-        error("+-;)");
+        error("+-;)","ePrima");
     }
     
 }
@@ -388,7 +409,7 @@ void t(){ // 18
         tPrima();
         return;
     }else{
-        error("(inr[");
+        error("(inr[","t");
     }
     
 }
@@ -422,7 +443,7 @@ void tPrima(){ // 19
     }else if(actual == '+'|| actual == '-' || actual == ')' || actual == ';'){
         return;
     }else{
-        error("*/\\%%^+-);");
+        error("*/\\%%^+-);","tPrima");
     }
     
 }
@@ -435,7 +456,7 @@ void f(){ // 20
             actual = getcharatomo ();
             return;
         }else{
-            error(")");
+            error(")","f");
         }
     }else if(actual == 'i'){
         actual = getcharatomo ();
@@ -450,7 +471,7 @@ void f(){ // 20
         llama();
         return;
     }else{
-        error("(inr[");
+        error("(inr[","f");
     }
     
 }
@@ -477,7 +498,7 @@ void r(){ // 21
         vTriPrima();
         return;
     }else{
-        error("inrs");
+        error("inrs","r");
     }
     
 }
@@ -502,7 +523,7 @@ void rPrima(){ // 22
         actual = getcharatomo ();
         return;
     }else{
-        error("<>ledu");
+        error("<>ledu","rPrima");
     }
     
 }
@@ -521,7 +542,7 @@ void v(){ // 23
         actual = getcharatomo ();
         return;
     }else{
-        error("inrs");
+        error("inrs","v");
     }
     
 }
@@ -534,7 +555,7 @@ void vPrima(){ // 24
         actual = getcharatomo ();
         return;
     }else{
-        error("in");
+        error("in","vPrima");
     }
     
 }
@@ -547,7 +568,7 @@ void vBiPrima(){ // 25
         actual = getcharatomo ();
         return;
     }else{
-        error("ir");
+        error("ir","vBiPrima");
     }
     
 }
@@ -560,7 +581,7 @@ void vTriPrima(){ // 26
         actual = getcharatomo ();
         return;
     }else{
-        error("is");
+        error("is","vTriPrima");
     }
     
 }
@@ -593,10 +614,10 @@ void p(){ // 27
             actual = getcharatomo ();
             return;
         }else{
-            error(";");
+            error(";","p");
         }
     }else{
-        error("ifhwj[zc");
+        error("ifhwj[zc","p");
     }
     
 }
@@ -611,7 +632,7 @@ void listaP(){ // 28
         listaP();
         return;
     }else{
-        error("}t:qaoifhwj[zc");
+        error("}t:qaoifhwj[zc","listaP");
     }
     
 }
@@ -633,22 +654,22 @@ void w(){ // 29
                             actual = getcharatomo ();
                             return;
                         }else{
-                            error("}");
+                            error("}","w");
                         }
                     }else{
-                        error("{");
+                        error("{","w");
                     }
                 }else{
-                    error("m");
+                    error("m","w");
                 }
             }else{
-                error(")");
+                error(")","w");
             }
         }else{
-            error("(");
+            error("(","w");
         }
     }else{
-        error("w");
+        error("w","w");
     }
     
 }
@@ -667,16 +688,16 @@ void i(){ // 30
                     actual = getcharatomo ();
                     return;
                 }else{
-                    error(":");
+                    error(":","i");
                 }
             }else{
-                error(")");
+                error(")","i");
             }
         }else{
-            error("(");
+            error("(","i");
         }
     }else{
-        error("f");
+        error("f","i");
     }
     
 }
@@ -689,7 +710,7 @@ void iPrima(){ // 31
     }else if(actual == ':'){
         return;
     }else{
-        error("t:");
+        error("t:","iPrima");
     }
     
 }
@@ -709,16 +730,16 @@ void j(){ // 32
                     actual = getcharatomo ();
                     return;
                 }else{
-                    error("}");
+                    error("}","j");
                 }
             }else{
-                error("{");
+                error("{","j");
             }
         }else{
-            error("(");
+            error("(","j");
         }
     }else{
-        error("j");
+        error("j","j");
     }
     
 }
@@ -733,16 +754,16 @@ void y(){ // 33
                 actual = getcharatomo ();
                 return;
             }else{
-                error(";");
+                error(";","y");
             }
         }else{
-            error("=");
+            error("=","y");
         }
     }else if(actual == ';'){
         actual = getcharatomo ();
         return;
     }else{
-        error("i;");
+        error("i;","y");
     }
     
 }
@@ -754,13 +775,13 @@ void x(){ // 34
             actual = getcharatomo ();
             return;
         }else{
-            error(";");
+            error(";","x");
         }
     }else if(actual == ';'){
         actual = getcharatomo ();
         return;
     }else{
-        error("inrs;");
+        error("inrs;","x");
     }
     
 }
@@ -775,16 +796,16 @@ void z(){ // 35
                 actual = getcharatomo ();
                 return;
             }else{
-                error(")");
+                error(")","z");
             }
         }else{
-            error("=");
+            error("=","z");
         }
     }else if(actual == ')'){
         actual = getcharatomo ();
         return;
     }else{
-        error("i)");
+        error("i)","z");
     }
     
 }
@@ -806,22 +827,22 @@ void h(){ // 36
                             actual = getcharatomo ();
                             return;
                         }else{
-                            error("}");
+                            error("}","h");
                         }
                     }else{
-                        error("{");
+                        error("{","h");
                     }
                 }else{
-                    error(")");
+                    error(")","h");
                 }
             }else{
-                error("i");
+                error("i","h");
             }
         }else{
-            error("(");
+            error("(","h");
         }
     }else{
-        error("h");
+        error("h","h");
     }
     
 }
@@ -838,15 +859,15 @@ void cPrima(){ // 37
                 cPrima();
                 return;
             }else{
-                error(":");
+                error(":","cPrima");
             }
         }else{
-            error("n");
+            error("n","cPrima");
         }
     }else if(actual == 'o' || actual == '}'){
         return;
     }else{
-        error("ao}");
+        error("ao}","cPrima");
     }
     
 }
@@ -859,12 +880,12 @@ void oPrima(){ // 38
             listaP();
             return;
         }else{
-            error(":");
+            error(":","oPrima");
         }
     }else if(actual == '}'){
         return;
     }else{
-        error("o}");
+        error("o}","oPrima");
     }
     
 }
@@ -876,7 +897,7 @@ void u(){ // 39
     }else if(actual == 'a' || actual == 'o' || actual == '}'){
         return;
     }else{
-        error("qao}");
+        error("qao}","u");
     }
     
 }
@@ -893,16 +914,16 @@ void devuelve(){ // 40
                     actual = getcharatomo ();
                     return;
                 }else{
-                    error(";");
+                    error(";","devuelve");
                 }
             }else{
-                error(")");
+                error(")","devuelve");
             }
         }else{
-            error("(");
+            error("(","devuelve");
         }
     }else{
-        error("z");
+        error("z","devuelve");
     }
     
 }
@@ -914,7 +935,7 @@ void valor(){ // 41
         v();
         return;
     }else{
-        error("inrs)");
+        error("inrs)","valor");
     }
     
 }
@@ -933,19 +954,19 @@ void llama(){ // 42
                         actual = getcharatomo ();
                         return;
                     }else{
-                        error("]");
+                        error("]","llama");
                     }
                 }else{
-                    error(")");
+                    error(")","llama");
                 }
             }else{
-                error("(");
+                error("(","llama");
             }
         }else{
-            error("i");
+            error("i","llama");
         }
     }else{
-        error("[");
+        error("[","llama");
     }
     
 }
@@ -958,7 +979,7 @@ void arg(){ // 43
         otroArg();
         return;
     }else{
-        error(")inrs");
+        error(")inrs","arg");
     }
     
 }
@@ -971,7 +992,7 @@ void otroArg(){ // 44
         v();
         otroArg();
     }else{
-        error("),");
+        error("),","otroArg");
     }
     
 }
@@ -1141,6 +1162,59 @@ FinDeLinea " "+|\n|\t
   char *posStr = parseInttoString(pos);
   struct Nodo *temp = crearNuevoNodoToken(contTokens,0, posStr);
   agregarALista(tokensList,temp);
+  switch(pos){
+    case 0:
+        cadena[insertaAtomo++] = 'a';
+        break;
+    case 1:
+        cadena[insertaAtomo++] = 'b';
+        break;
+    case 2:
+        cadena[insertaAtomo++] = 'f';
+        break;
+    case 3:
+        cadena[insertaAtomo++] = 't';
+        break;
+    case 4:
+        cadena[insertaAtomo++] = 'g';
+        break;
+    case 5:
+        cadena[insertaAtomo++] = 'w';
+        break;
+    case 6:
+        cadena[insertaAtomo++] = 'm';
+        break;
+    case 7:
+        cadena[insertaAtomo++] = '#';
+        break;
+    case 8:
+        cadena[insertaAtomo++] = 'o';
+        break;
+    case 9:
+        cadena[insertaAtomo++] = 'x';
+        break;
+    case 10:
+        cadena[insertaAtomo++] = 'j';
+        break;
+    case 11:
+        cadena[insertaAtomo++] = 'h';
+        break;
+    case 12:
+        cadena[insertaAtomo++] = 'p';
+        break;
+    case 13:
+        cadena[insertaAtomo++] = 'c';
+        break;
+    case 14:
+        cadena[insertaAtomo++] = 'q';
+        break;
+    case 15:
+        cadena[insertaAtomo++] = 'y';
+        break;
+    case 16:
+        cadena[insertaAtomo++] = 'z';
+        break;
+  }
 }
 {Identif} {
   contTokens++;
@@ -1158,6 +1232,7 @@ FinDeLinea " "+|\n|\t
   char* posStr = parseInttoString(posicionIdent);
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,1,posStr);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = 'i';
 }
 {CerosInicio} {
   printf("Error: %s\n", yytext);
@@ -1167,6 +1242,7 @@ FinDeLinea " "+|\n|\t
   // Se añade a la tabla de tokens
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,2,yytext);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = 'n';
 }
 {constantesNumOct} {
   contTokens++;
@@ -1184,6 +1260,7 @@ FinDeLinea " "+|\n|\t
   // Se añade a la tabla de tokens
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,2,parseInttoString(numeroDecimal));
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = 'n';
 }
 {ConstantesReal} {
   contTokens++;
@@ -1195,6 +1272,7 @@ FinDeLinea " "+|\n|\t
   char* posStr = parseInttoString(contReales);
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,3,posStr);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = 'r';
 }
 {ConstantesCad} {
   contTokens++;
@@ -1206,16 +1284,19 @@ FinDeLinea " "+|\n|\t
   char* posStr = parseInttoString(contCadenas);
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,4,posStr);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = 's';
 }
 {SimbolosEsp} {
   contTokens++;
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,5,yytext);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = *yytext;
 }
 {OperadoresArit} {
   contTokens++;
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,6,yytext);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = *yytext;
 }
 {OperadoresRela1} {
   int pos = buscaOperador(yytext);
@@ -1224,6 +1305,21 @@ FinDeLinea " "+|\n|\t
   char* posStr = parseInttoString(pos);
   struct Nodo *temp = crearNuevoNodoToken(contTokens,7,posStr);
   agregarALista(tokensList,temp);
+
+  switch(pos){
+    case 2:
+        cadena[insertaAtomo++] = 'l';
+        break;
+    case 3:
+        cadena[insertaAtomo++] = 'u';
+        break;
+    case 4:
+        cadena[insertaAtomo++] = 'e';
+        break;
+    case 5:
+        cadena[insertaAtomo++] = 'd';
+        break;
+  }
 }
 {OperadoresRela2} {
   int pos = buscaOperador(yytext);
@@ -1232,17 +1328,30 @@ FinDeLinea " "+|\n|\t
   char* posStr = parseInttoString(pos);
   struct Nodo *temp = crearNuevoNodoToken(contTokens,7,posStr);
   agregarALista(tokensList,temp);
+  switch(pos){
+    case 0:
+        cadena[insertaAtomo++] = '<';
+        break;
+    case 1:
+        cadena[insertaAtomo++] = '>';
+        break;
+  }
 }
 {OperadoresAsig} {
   contTokens++;
   struct Nodo *tempToken = crearNuevoNodoToken(contTokens,8,yytext);
   agregarALista(tokensList,tempToken);
+  cadena[insertaAtomo++] = '=';
 }
 {FinDeLinea} {
   printf("");
 }
 . {
-  printf("Error: %s\n", yytext);
+  // Condicion para evitar el retorno de carro como error
+  if(*yytext != 13){
+    printf("Error: %s\n", yytext);
+    printf("Valor: %d\n", *yytext);
+  }
 }
 
 %%
@@ -1396,6 +1505,7 @@ int main(int argc, char *argv[]){
     
     printf("\n###########################\n");
     printf("ANALIZADOR SINTACTICO\n");
+    muestraCadena();
     actual = getcharatomo ();
     program();
     veredicto();
