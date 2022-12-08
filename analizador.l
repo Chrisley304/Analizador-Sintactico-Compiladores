@@ -6,7 +6,7 @@
   Integrantes:
     - Núñez Quintana Luis Axel 
     - Leyva Mercado Christian Alejandro
-  Fecha de elaboración: 01 de noviembre del 2022
+  Fecha de elaboración: 07 de diciembre del 2022
 */
 
 // Bibliotecas/Headers
@@ -1359,7 +1359,7 @@ int yywrap(){return(1);}
 
 // Función para crear archivo de salida con extensión .txt
 void obtenerArchivoSalidaTXT(){
-  archSal = fopen("salida.txt","w");
+  archSal = fopen("analisisLexico.txt","w");
   struct Nodo *q;
   // Tabla de identificadores
   fprintf(archSal,"=== Tabla de identificadores ===\nPosición: Valor | Tipo\n");
@@ -1439,7 +1439,7 @@ void mostrarSalida(){
 
 // Función para crear archivo de salida con extensión .csv
 void obtenerArchivoSalidaCSV(){
-  archSal = fopen("salida.csv","w");
+  archSal = fopen("analisisLexico.csv","w");
   struct Nodo *q;
   // Tabla de identificadores
   fprintf(archSal,",Tabla de identificadores,\nPosición,Valor,Tipo\n");
