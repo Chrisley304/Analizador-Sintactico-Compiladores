@@ -74,7 +74,7 @@ void otroArg();
 
 // Definción de funciones auxiliares de analizador sintáctico
 void error(char * error){
-    printf("Error al analizar atomo %d: %c, se esperaba %s \n",atomo, cadena[atomo], error);
+    printf("Error al analizar atomo %d: \'%c\' se esperaba %s \n",atomo, cadena[atomo], error);
     errores ++;
 }
 
@@ -128,15 +128,15 @@ void func(){ // 3
         if(actual == 'i'){
             actual = getcharatomo ();
             if(actual == '('){
-                actual = getcharatomo ();
+                actual = getcharatomo();
                 param();
                 if(actual == ')'){
-                    actual = getcharatomo ();
+                    actual = getcharatomo();
                     if(actual == '{'){
-                        actual = getcharatomo ();
+                        actual = getcharatomo();
                         cuerpo();
                         if(actual == '}'){
-                            actual = getcharatomo ();
+                            actual = getcharatomo();
                             return;
                         }else{
                             error("}");
@@ -1112,6 +1112,7 @@ int buscaLista(char* busqueda, struct Lista *lista){
 }
 
 %}
+
 /*Expresiones regulares, si esta capitalizado el nombre tiene una acción asignada, de otra maanera es auxiliar*/
 PalabraReservada alternative|big|evaluate|instead|large|loop|make|number|other|real|repeat|select|small|step|stop|symbol|throw
 Identif \$([a-z]|[A-Z])+
@@ -1249,8 +1250,8 @@ FinDeLinea " "+|\n|\t
 int yywrap(){return(1);}
 
 // Función para crear archivo de salida con extensión .txt
-void obtenerArchivoSalidaTXT(){
-  archSal = fopen("salida.txt","w");
+void getSalidaLexicoTXT(){
+  archSal = fopen("analisisLexico.txt","w");
   struct Nodo *q;
   // Tabla de identificadores
   fprintf(archSal,"=== Tabla de identificadores ===\nPosición: Valor | Tipo\n");
@@ -1291,7 +1292,7 @@ void obtenerArchivoSalidaTXT(){
 }
 
 // Función para mostrar la salida en consola
-void mostrarSalida(){
+void getSalidaLexicoCONSOLA(){
   struct Nodo *q;
   // Tabla de identificadores
   printf("=== Tabla de identificadores ===\nPosición: Valor | Tipo\n");
@@ -1329,8 +1330,8 @@ void mostrarSalida(){
 }
 
 // Función para crear archivo de salida con extensión .csv
-void obtenerArchivoSalidaCSV(){
-  archSal = fopen("salida.csv","w");
+void getSalidaLexicoCSV(){
+  archSal = fopen("analisisLexico.csv","w");
   struct Nodo *q;
   // Tabla de identificadores
   fprintf(archSal,",Tabla de identificadores,\nPosición,Valor,Tipo\n");
@@ -1389,20 +1390,20 @@ int main(int argc, char *argv[]){
     // Se cierra el flujo del archivo
     fclose(yyin);
     // Se generan los archivos de salida
-    obtenerArchivoSalidaCSV();
-    obtenerArchivoSalidaTXT();
+    getSalidaLexicoCSV();
+    getSalidaLexicoTXT();
     // Se muestra la salida del programa
-    mostrarSalida();
+    getSalidaLexicoCONSOLA();
     
     printf("\n###########################\n");
     printf("ANALIZADOR SINTACTICO\n");
-    actual = getcharatomo ();
+    actual = getcharatomo();
     program();
     veredicto();
   }else{
     // La entrada sera por teclado
     yylex();
   }
-  // mostrarSalida();
+  // getSalidaLexicoCONSOLA();
   return 0;
 }
